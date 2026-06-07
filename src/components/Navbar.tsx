@@ -87,16 +87,21 @@ const Navbar = ({ onSearchOpen }: NavbarProps) => {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="text-sm font-medium text-muted hover:text-white transition-colors duration-200"
-                style={link.sport ? { color: sportConfigs[link.sport].textColor } : undefined}
-              >
-                {link.label}
-              </Link>
+          <div className="hidden md:flex items-center gap-6">
+            {navLinks.map((link, index) => (
+              <div key={link.label} className="flex items-center">
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="text-sm font-medium text-muted hover:text-white transition-colors duration-200"
+                  style={link.sport ? { color: sportConfigs[link.sport].textColor } : undefined}
+                >
+                  {link.label}
+                </Link>
+                {index < navLinks.length - 1 && (
+                  <span className="text-[#333] ml-6">|</span>
+                )}
+              </div>
             ))}
           </div>
 
@@ -177,15 +182,20 @@ const Navbar = ({ onSearchOpen }: NavbarProps) => {
       {mobileMenuOpen && (
         <div className="md:hidden bg-[rgba(10,10,10,0.98)] border-b border-border">
           <div className="px-4 py-4 space-y-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="block text-sm font-medium text-muted hover:text-white transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
+            {navLinks.map((link, index) => (
+              <div key={link.label} className="flex items-center">
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="block text-sm font-medium text-muted hover:text-white transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+                {index < navLinks.length - 1 && (
+                  <span className="text-[#333] mx-3">|</span>
+                )}
+              </div>
             ))}
             <div className="pt-3 border-t border-border flex items-center space-x-4">
               <button onClick={handleSearchOpen} className="p-2 text-muted">

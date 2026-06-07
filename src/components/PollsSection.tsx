@@ -13,8 +13,10 @@ const PollCard = ({ poll }: PollCardProps) => {
   const [voted, setVoted] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [totalVotes, setTotalVotes] = useState(poll.totalVotes);
-  const [options, setOptions] = useState<PollOption[]>(poll.options);
-  const config = sportConfigs[poll.sport];
+  const [options, setOptions] = useState<PollOption[]>(
+    poll.options.map(opt => ({ ...opt, text: (opt as any).text || opt.label || opt.id }))
+  );
+  const config = sportConfigs[poll.sport as Sport];
 
   const handleVote = async (optionId: string) => {
     if (voted) return;
@@ -52,7 +54,7 @@ const PollCard = ({ poll }: PollCardProps) => {
         {poll.question}
       </p>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {options.map((option) => {
           const percentage = getPercentage(option.votes);
           const isSelected = selectedOption === option.id;
@@ -62,13 +64,29 @@ const PollCard = ({ poll }: PollCardProps) => {
               {!voted ? (
                 <button
                   onClick={() => handleVote(option.id)}
-                  className="w-full text-left px-4 py-3 rounded-md bg-[#1a1a1a] border border-[#2a2a2a] text-[12px] text-body hover:border-[#444] transition-all duration-200"
+                  className="w-full text-left px-3.5 py-2.5 rounded-md bg-[#1a1a1a] border border-[#2a2a2a] text-[12px] text-body hover:border-[#444] transition-all duration-200 hover:bg-[#1f1f1f]"
+                  style={isSelected ? { borderColor: config.textColor, borderLeftWidth: '3px' } : undefined}
                 >
                   {option.text}
                 </button>
               ) : (
-                <div className="relative">
-                  <div className="flex items-center justify-between mb-1">
+                <div
+                  className="relative rounded-md overflow-hidden"
+                  style={isSelected ? { borderLeft: `3px solid ${config.textColor}` } : undefined}
+                >
+                  {/* Progress bar background */}
+                  <div
+                    className="absolute inset-0 transition-all duration-700 ease-out rounded-md"
+                    style={{
+                      width: `${percentage}%`,
+                      backgroundColor: isSelected
+                        ? `${config.textColor}15`
+                        : "rgba(255,255,255,0.03)",
+                    }}
+                  />
+
+                  {/* Content */}
+                  <div className="relative flex items-center justify-between px-3.5 py-2.5">
                     <span
                       className={`text-[12px] ${
                         isSelected ? "font-medium" : "text-muted"
@@ -77,21 +95,20 @@ const PollCard = ({ poll }: PollCardProps) => {
                     >
                       {option.text}
                     </span>
-                    <span
-                      className="text-[12px] font-medium"
-                      style={isSelected ? { color: config.textColor } : undefined}
-                    >
-                      {percentage}%
-                    </span>
-                  </div>
-                  <div className="w-full h-2 bg-[#1a1a1a] rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all duration-800 ease-out"
-                      style={{
-                        width: `${percentage}%`,
-                        backgroundColor: isSelected ? config.textColor : "#333",
-                      }}
-                    />
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="text-[12px] font-medium"
+                        style={isSelected ? { color: config.textColor } : undefined}
+                      >
+                        {percentage}%
+                      </span>
+                      {isSelected && (
+                        <div
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: config.textColor }}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
@@ -105,7 +122,7 @@ const PollCard = ({ poll }: PollCardProps) => {
           {totalVotes.toLocaleString()} votes
         </span>
         <span className="text-[11px] text-[#444]">
-          {poll.daysRemaining} days left
+          {poll.daysRemaining || 7} days left
         </span>
       </div>
     </div>
