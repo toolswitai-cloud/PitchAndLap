@@ -14,7 +14,7 @@ const PollCard = ({ poll }: PollCardProps) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [totalVotes, setTotalVotes] = useState(poll.totalVotes);
   const [options, setOptions] = useState<PollOption[]>(
-    poll.options.map(opt => ({ ...opt, text: (opt as any).text || opt.label || opt.id }))
+    poll.options.map((opt: any) => ({ ...opt, text: opt.text || opt.label || opt.id }))
   );
   const config = sportConfigs[poll.sport as Sport];
 
